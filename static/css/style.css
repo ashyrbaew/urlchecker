@@ -125,7 +125,8 @@
 
 .links {
     /* border: 2px solid rgb(223, 247, 7); */
-    padding: 2%;
+    /*padding: 2%;*/
+    padding: 15px 0px 0px 10px;
     margin: 10px;
     display: flex;
     flex-wrap: wrap;

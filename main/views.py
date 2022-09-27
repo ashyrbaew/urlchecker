@@ -30,7 +30,7 @@ def dashboard(request):
         return redirect("dashboard")
 
     # retrieving current users links
-    links = Urls.objects.filter(user=request.user, is_active=True).order_by("-id")
+    links = Urls.objects.filter(user=request.user).order_by("-id")
 
     # paginating 4 items per page
     paginator = Paginator(links, 4)
@@ -48,51 +48,45 @@ def update_url(request, pk):
     url.title = request.POST.get(f"title_{pk}")
     url.url = request.POST.get(f"url_{pk}")
     url.save()
-    # return redirect("dashboard")
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 def delete_url(request, pk):
-    todo = get_object_or_404(Urls, id=pk, user=request.user)
-    todo.delete()
+    url_item = get_object_or_404(Urls, id=pk, user=request.user)
+    url_item.delete()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
-def deactivate_url(request, pk):
-    todo = get_object_or_404(Urls, id=pk, user=request.user)
-    todo.is_active = False
-    todo.save()
+def play_pause_check(request, pk):
+    url_item = get_object_or_404(Urls, id=pk, user=request.user)
+    if url_item.is_active:
+        url_item.is_active = False
+    else:
+        url_item.is_active = True
+    url_item.save()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
-import aiohttp
-import asyncio
+def update_interval(request, pk):
+    url = get_object_or_404(Urls, id=pk, user=request.user)
+    url.update_interval = request.POST.get("interval")
+    url.save()
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
-url_list = [
-    'https://google.com/',
-    'https://facebook.com/',
-    'https://stackoverflow.com/'
-]
-result=[]
-async def main():
-    async with aiohttp.ClientSession() as session:
-        for i in url_list:
-            async with session.get(i) as response:
-            result.append(response.status)
-            html = await response.text()
-            print("Body:", html[:15], "...")
-
-loop = asyncio.get_event_loop()
-loop.run_until_complete(main())
-
-async def multiprocessing_func():
-    url_list = [
-        'https://google.com/',
-        'https://facebook.com/',
-        'https://stackoverflow.com/'
-    ]
-    tasks = []
-    async with aiohttp.ClientSession() as session:
-        for i in url_list:
-            tasks.append(asyncio.create_task(check(i, session)))
-        return await asyncio.gather(*tasks)
+# import aiohttp
+# import asyncio
+#
+# url_list = [
+#     'https://google.com/',
+#     'https://facebook.com/',
+#     'https://stackoverflow.com/'
+# ]
+# result=[]
+#
+# async def main():
+#     async with aiohttp.ClientSession() as session:
+#         for i in url_list:
+#             async with session.get(i) as response:
+#                 result.append(response.status)
+# loop = asyncio.get_event_loop()
+# loop.run_until_complete(main())

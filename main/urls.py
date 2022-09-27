@@ -1,7 +1,8 @@
 from django.urls import path
 from django.contrib.auth.views import LoginView, LogoutView
 
-from .views import dashboard, register, update_url, deactivate_url, delete_url
+from .views import dashboard, register, update_url, play_pause_check, \
+    delete_url, update_interval
 
 urlpatterns = [
     path("", dashboard, name="dashboard"),
@@ -10,6 +11,7 @@ urlpatterns = [
     path("register/", register, name="register"),
 
     path("update/url/<int:pk>/", update_url, name="update_url"),
-    path("deactivate/url/<int:pk>/", deactivate_url, name="deactivate_url"),
+    path("playpause/url/<int:pk>/", play_pause_check, name="play_pause_check"),
     path("delete/url/<int:pk>/", delete_url, name="delete_url"),
+    path("updateinterval/url/<int:pk>/", update_interval, name="update_interval"),
 ]

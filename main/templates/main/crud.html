@@ -19,8 +19,15 @@
             <p>{{ i.title }} - status_code: 200 | </p><p>{{ i.url }}</p>
             <ul class="crud-buttons">
                 <li>
+                    <form style="width:240px; padding:1px;" action="{% url 'update_interval' i.id %}" method="post">
+                    {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-primary" name="interval" value="5" >5 min</button>
+                        <button type="submit" class="btn btn-sm btn-primary" name="interval" value="10" >10 min</button>
+                        <button type="submit" class="btn btn-sm btn-primary" name="interval" value="15">15 min</button>
+                    </form>
+                </li>
+                <li>
                     <button id="edit-link" data-toggle="modal" data-target="#editUrlModal_{{ i.id }}">Edit</button>
-
                     <div class="modal fade" id="editUrlModal_{{ i.id }}" tabindex="-1" role="dialog"
                         aria-labelledby="editUrlModalLabel" aria-hidden="true">
                         <div class="modal-dialog" role="document">
@@ -48,7 +55,7 @@
                         </div>
                     </div>
                 </li>
-                <li><a href="{% url 'deactivate_url' i.id %}" id="complete-link">Deactivate</a></li>
+                <li><a href="{% url 'play_pause_check' i.id %}" id="complete-link">{% if i.is_active %} Pause {% else %}  Play {% endif %}</a></li>
                 <li><a href="{% url 'delete_url' i.id %}" id="delete-link">Delete</a></li>
             </ul>
         </div>

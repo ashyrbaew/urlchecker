@@ -8,6 +8,7 @@ class Urls(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
+    update_interval = models.CharField(max_length=10, default=5, null=True, blank=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,
         related_name="url_item")
 

@@ -132,3 +132,11 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
 STATIC_ROOT = "/static/"
+
+#
+# CELERY_BROKER_URL = 'redis://'+os.environ.get('REDIS_HOST')+':'+os.environ.get('REDIS_PORT')+'/0'
+# CELERY_IMPORTS = ['api.v1.tasks.ad']
+# CELERY_ENABLE_UTC = False
+# CELERY_TIMEZONE = TIME_ZONE
+
+#use @shared_task
