@@ -63,3 +63,36 @@ def deactivate_url(request, pk):
     todo.is_active = False
     todo.save()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
+import aiohttp
+import asyncio
+
+url_list = [
+    'https://google.com/',
+    'https://facebook.com/',
+    'https://stackoverflow.com/'
+]
+result=[]
+async def main():
+    async with aiohttp.ClientSession() as session:
+        for i in url_list:
+            async with session.get(i) as response:
+            result.append(response.status)
+            html = await response.text()
+            print("Body:", html[:15], "...")
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(main())
+
+async def multiprocessing_func():
+    url_list = [
+        'https://google.com/',
+        'https://facebook.com/',
+        'https://stackoverflow.com/'
+    ]
+    tasks = []
+    async with aiohttp.ClientSession() as session:
+        for i in url_list:
+            tasks.append(asyncio.create_task(check(i, session)))
+        return await asyncio.gather(*tasks)

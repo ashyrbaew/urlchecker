@@ -16,8 +16,7 @@
     {% for i in page_obj %}
     <div class="link-container">
         <div class="links">
-            <p>title:{{ i.title }}</p>
-            <p>link:{{ i.url }}</p>
+            <p>{{ i.title }} - status_code: 200 | </p><p>{{ i.url }}</p>
             <ul class="crud-buttons">
                 <li>
                     <button id="edit-link" data-toggle="modal" data-target="#editUrlModal_{{ i.id }}">Edit</button>
