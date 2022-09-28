@@ -123,6 +123,21 @@
     background-color: pink;
 }
 
+.link-header{
+    background-color: #3b3b3b;
+}
+
+.btn-primary{
+    background-color: #fff;
+    color: #333;
+}
+
+.btn-primary-active{
+    color: #fff;
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+
 .links {
     /* border: 2px solid rgb(223, 247, 7); */
     /*padding: 2%;*/
@@ -164,7 +179,7 @@
 }
 
 .crud-buttons #complete-link {
-    width: 102px;
+    width: 60px;
     background-color: #fff;
     color: var(--gray-dark);
     border: 1px solid var(--gray-dark);

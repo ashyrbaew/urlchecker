@@ -12,18 +12,29 @@
             <button type="submit">Add Item</button>
         </form>
     </div>
-
-    {% for i in page_obj %}
-    <div class="link-container">
+    <div class="link-header">
         <div class="links">
-            <p>{{ i.title }} - status_code: 200 | </p><p>{{ i.url }}</p>
+            <p style="color: #fff;font-weight: bold;">TITLE </p>
+            <p style="color: #fff;font-weight: bold;padding-left: 200px;">URL </p>
+            <p style="color: #fff;font-weight: bold;padding-left: 420px;">URL CHECK INTERVAL </p>
+            <p style="color: #fff;font-weight: bold;padding-right: 70px;">URL MANAGEMENT</p>
+        </div>
+    </div>
+    {% for i in page_obj %}
+    <div class="link-container" {% if i.status_code == '200' and i.is_active %}
+         style="background-color: #a6d8b9;"
+         {% elif not i.is_active %}style="background-color: #cdcdcd;"
+         {% else %} style="background-color: pink;"
+         {% endif %}>
+        <div class="links">
+            <p>{{ i.title }} | </p><p>{{ i.url }} - GET: {{ i.status_code }} </p>
             <ul class="crud-buttons">
                 <li>
                     <form style="width:240px; padding:1px;" action="{% url 'update_interval' i.id %}" method="post">
                     {% csrf_token %}
-                        <button type="submit" class="btn btn-sm btn-primary" name="interval" value="5" >5 min</button>
-                        <button type="submit" class="btn btn-sm btn-primary" name="interval" value="10" >10 min</button>
-                        <button type="submit" class="btn btn-sm btn-primary" name="interval" value="15">15 min</button>
+                        <button type="submit" {% if i.update_interval == '5' %} class="btn btn-sm btn-primary-active" {% else %} class="btn btn-sm btn-primary" {% endif %} name="interval" value="5" >5 min</button>
+                        <button type="submit" {% if i.update_interval == '10' %} class="btn btn-sm btn-primary-active" {% else %} class="btn btn-sm btn-primary" {% endif %} name="interval" value="10" >10 min</button>
+                        <button type="submit" {% if i.update_interval == '15' %} class="btn btn-sm btn-primary-active" {% else %} class="btn btn-sm btn-primary" {% endif %} name="interval" value="15">15 min</button>
                     </form>
                 </li>
                 <li>
@@ -90,5 +101,9 @@
         </ul>
     </nav>
 </div>
-
+<script>
+    setTimeout(function () {
+       window.location.reload();
+    }, 5000);
+</script>
 {% endblock %}

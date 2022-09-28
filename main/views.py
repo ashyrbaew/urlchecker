@@ -1,9 +1,18 @@
+import aiohttp
+import asyncio
+
 from .forms import UserRegistrationForm
 from .models import Urls
+from .serializers import UrlsSerializer
+
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.core.paginator import Paginator
+
+from celery import shared_task
+from rest_framework import viewsets, mixins
+from rest_framework.permissions import AllowAny
 
 
 def register(request):
@@ -20,6 +29,13 @@ def register(request):
     return render(request, "main/register.html", context)
 
 
+# In case of needed API
+class UrlsViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
+    permission_classes = [AllowAny]
+    serializer_class = UrlsSerializer
+    queryset = Urls.objects.all()
+
+
 @login_required
 def dashboard(request):
     if request.method == 'POST':
@@ -29,18 +45,28 @@ def dashboard(request):
         new_url.save()
         return redirect("dashboard")
 
-    # retrieving current users links
     links = Urls.objects.filter(user=request.user).order_by("-id")
-
-    # paginating 4 items per page
     paginator = Paginator(links, 4)
-    # It's URL param for getting the current page number
     page_number = request.GET.get("page")
-    # retrieving all the url items for that page
     page_obj = paginator.get_page(page_number)
-
     context = {"user_links": links, "page_obj": page_obj}
     return render(request, "main/crud.html", context)
+
+
+@shared_task
+def update_url_statuses_db(interval):
+    url_items = Urls.objects.filter(update_interval=interval, is_active=True)
+
+    async def check_url():
+        async with aiohttp.ClientSession() as session:
+            for item in url_items:
+                async with session.get(item.url) as response:
+                    item.status_code = response.status
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(check_url())
+    Urls.objects.bulk_update(url_items, ['status_code'])
+
+    return HttpResponse(status=204)
 
 
 def update_url(request, pk):
@@ -73,20 +99,3 @@ def update_interval(request, pk):
     url.save()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
-# import aiohttp
-# import asyncio
-#
-# url_list = [
-#     'https://google.com/',
-#     'https://facebook.com/',
-#     'https://stackoverflow.com/'
-# ]
-# result=[]
-#
-# async def main():
-#     async with aiohttp.ClientSession() as session:
-#         for i in url_list:
-#             async with session.get(i) as response:
-#                 result.append(response.status)
-# loop = asyncio.get_event_loop()
-# loop.run_until_complete(main())
