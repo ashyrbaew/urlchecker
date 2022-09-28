@@ -1,0 +1,57 @@
+version: '3'
+services:
+  redis:
+    image: redis:alpine
+    environment:
+      TZ: "Asia/Bishkek"
+    ports:
+      - '6379:6379'
+
+  db:
+    image: postgres:13
+    container_name: db
+    volumes:
+      - ./postgres_data/:/var/lib/postgresql/
+    environment:
+      - POSTGRES_USER=urlchecker
+      - POSTGRES_PASSWORD=urlchecker
+      - POSTGRES_DB=urlchecker
+      - TZ=Asia/Bishkek
+    ports:
+      - 5432:5432
+
+  web:
+    build: .
+    container_name: urlchecker
+    environment:
+      - DJANGO_SETTINGS_MODULE=urlchecker.settings
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+    links:
+      - redis
+
+  celery:
+    build:
+      context: .
+    command: celery --app urlchecker worker --beat -l INFO
+    environment:
+      - POSTGRES_USER=urlchecker
+      - POSTGRES_PASSWORD=urlchecker
+      - POSTGRES_DB=urlchecker
+      - TZ=Asia/Bishkek
+    links:
+      - redis
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    restart: unless-stopped
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    ports:
+      - "80:80"
+      - "443:443"
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
