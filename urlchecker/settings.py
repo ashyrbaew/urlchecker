@@ -34,6 +34,9 @@ ALLOWED_HOSTS = ['*']
 
 SITE_URL = env.str('SITE_URL', default='http://localhost:8000')
 
+# DJANGO_ALLOW_ASYNC_UNSAFE should be true to work with Celery
+os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -139,8 +142,8 @@ STATICFILES_DIRS = [
 ]
 STATIC_ROOT = "/static/"
 
-
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+CELERY_BROKER_URL = 'redis://redis:6379/0'
 CELERY_IMPORTS = ['main.views']
 CELERY_ENABLE_UTC = False
 CELERY_TIMEZONE = TIME_ZONE

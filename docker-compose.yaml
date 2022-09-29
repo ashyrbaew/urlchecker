@@ -2,6 +2,7 @@ version: '3'
 services:
   redis:
     image: redis:alpine
+    container_name: redis
     environment:
       TZ: "Asia/Bishkek"
     ports:
@@ -9,7 +10,8 @@ services:
 
   db:
     image: postgres:13
-    container_name: db
+    container_name: PostgreSQL
+    restart: always
     volumes:
       - ./postgres_data/:/var/lib/postgresql/
     environment:
@@ -21,27 +23,29 @@ services:
       - 5432:5432
 
   web:
-    build: .
-    container_name: urlchecker
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: django
     environment:
       - DJANGO_SETTINGS_MODULE=urlchecker.settings
     ports:
       - 8000:8000
     depends_on:
       - db
+      - celery
     links:
       - redis
 
   celery:
     build:
       context: .
-    command: celery --app urlchecker worker --beat -l INFO
+      dockerfile: Dockerfile.celery
+    container_name: celery
     environment:
-      - POSTGRES_USER=urlchecker
-      - POSTGRES_PASSWORD=urlchecker
-      - POSTGRES_DB=urlchecker
-      - TZ=Asia/Bishkek
-    links:
+      - DJANGO_SETTINGS_MODULE=urlchecker.settings
+    command: celery -A urlchecker worker --beat -l INFO
+    depends_on:
       - redis
 
   nginx:

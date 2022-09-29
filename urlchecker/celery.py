@@ -9,17 +9,17 @@ app = Celery('urlchecker')
 app.conf.beat_schedule = {
     "update_every_5_min": {
         "task": 'main.views.update_url_statuses_db',
-        "schedule": crontab(minute='*/2'),
+        "schedule": crontab(minute='*/5'),
         "args": ['5']
     },
     "update_every_10_min": {
         "task": 'main.views.update_url_statuses_db',
-        "schedule": crontab(minute='*/3'),
+        "schedule": crontab(minute='*/10'),
         'args': ['10']
     },
     "update_every_15_min": {
         "task": 'main.views.update_url_statuses_db',
-        "schedule": crontab(minute='*/5'),
+        "schedule": crontab(minute='*/15'),
         'args': ['15']
     }
 }

@@ -38,6 +38,7 @@ class UrlsViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
 
 @login_required
 def dashboard(request):
+    per_page_item_count = 20
     if request.method == 'POST':
         lnk = request.POST.get("link")
         title = request.POST.get("title")
@@ -46,7 +47,7 @@ def dashboard(request):
         return redirect("dashboard")
 
     links = Urls.objects.filter(user=request.user).order_by("-id")
-    paginator = Paginator(links, 4)
+    paginator = Paginator(links, per_page_item_count)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
     context = {"user_links": links, "page_obj": page_obj}
@@ -98,4 +99,3 @@ def update_interval(request, pk):
     url.update_interval = request.POST.get("interval")
     url.save()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-
