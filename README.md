@@ -1,50 +1,57 @@
 # urlchecker
 
-### Simple app to check url statuses
+### Simple app to periodically check url HTTP responses
 
 
 ## Technical requirements for Project:
-    Python >=3.8
-    Django 2.2
+    Python >= 3.8
+    Django >= 32
+    Redis = 4.3.4
+    Celery = 5.2.7
+
+    * For details, please refer to requirements.txt
 ---
 
 ## Project Description
-A simple app which can import huge CSV files into DB using Python/Django
-and provide it via API. To test it, please follow below steps:
+This app checks links added by registered users and shows response in red highlighted color if not 200
+or in green color, You can also manage urls via admin panels or by loggin in to system
+
+Implemented also API at /urls/api path, you can customize this project to use
+as API designed app 
+inorder to test please follow below steps 
 
 ---
 
 
 ## Running Project locally
-* Below commands copies the project to your machine and runs locally 
+* Below commands copies the project to your machine and runs locally
+simply follow steps
 
 ```bash
-$ git clone https://github.com/ashyrbaew/csv_to_db.git
+$ git clone https://github.com/ashyrbaew/urlchecker.git
 $ virtualenv -p python3.9 .venv
 $ source .venv/bin/activate
 $ pip install -r requirements.txt
 ```
-* copy/rename and update .env_sample file into project root dir as .env, with same folder as settings.py,
+* copy/rename and update .env_sample file as .env, with same folder as settings.py,
 by default it is set up for Production environment
 * update .env file settings(db, etc) according to your system
-* Run below 2 commands at project directory, first command is to import
-large csv files into db, just `python manage.py import_csv path/to/file.csv`
+* Run next command:
 ```bash
-$ python manage.py import_csv /Users/akylbek/Desktop/test_data.csv
+$ python manage.py migrate
 $ python ./manage.py runserver
 ```
 
 ---
 
 ## Starting Project at Production server, follow below steps:
-* copy/rename and update .env_sample file into project root dir as .env, with same folder as settings.py,
+* copy/rename and update .env_sample file located at project root dir as .env, with same folder as settings.py,
 by default it is set up for Production environment
-* It will automatically imports test_data.csv file into postgres db 
-* Automaticllay creates user admin, with password admin, so, you can open
-djangos built-in admin panel and login with above user/pass to check 
+* Run below commands, by default it automatocally craetes admin user with admin password
+<b>update admin password immediately since its done for test purposes only</b>
 
 ```bash
-$ git clone https://github.com/ashyrbaew/csv_to_db.git
+$ git clone https://github.com/ashyrbaew/urlchecker.git
 $docker-compose build .
 $docker-compose up
 ```
