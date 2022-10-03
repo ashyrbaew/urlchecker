@@ -13,8 +13,8 @@
 ---
 
 ## Project Description
-This app checks links added by registered users and shows response in red highlighted color if not 200
-or in green color, You can also manage urls via admin panels or by loggin in to system
+This app checks links added by registered users and shows response in highlighted with color,  if the response not 200 in red color
+otherwise in green, You can also manage urls via admin panels or by logging in to system
 
 Implemented also API at /urls/api path, you can customize this project to use
 as API designed app 
